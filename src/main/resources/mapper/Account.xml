@@ -1,0 +1,63 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.light.storage.mapper.AccountMapper">
+    <resultMap id="BaseResultMap" type="com.light.storage.entity.Account">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="alter_time" jdbcType="VARCHAR" property="alterTime"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,name,account,password,alter_time
+    </sql>
+    <!--    where用于去除第一个条件中出现的and前缀，
+    那么set标签就是去除最后一个更新字段语句中出现的,[逗号]后缀。
+    where 和 set 完全都可以被trim替换使用-->
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="int" >
+        select
+        <include refid="Base_Column_List"/>
+        from accounts where user_id=#{userId}
+    </select>
+
+    <select id="selectByName"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from accounts
+        where name like concat('%',#{name},'%') and user_id=#{userId}
+    </select>
+
+
+    <insert id="insert" parameterType="Account">
+        insert into accounts (name,account,password,alter_time,user_id)
+        values (#{name},#{account},#{password},#{alterTime},#{userId})
+    </insert>
+
+    <update id="updateSelective" parameterType="Account">
+        update accounts
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="account!=null">
+                account=#{account},
+            </if>
+            <if test="password!=null">
+                password=#{password},
+            </if>
+            <if test="alterTime!=null">
+                alter_time=#{alterTime},
+            </if>
+
+        </set>
+        where id=#{id} and user_id=#{userId}
+    </update>
+
+
+
+    <select id="getNumOfAcc" resultType="int" parameterType="int">
+        select count(*) from accounts where user_id=#{userId}
+    </select>
+</mapper>

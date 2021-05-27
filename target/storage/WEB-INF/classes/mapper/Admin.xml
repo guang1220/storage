@@ -1,0 +1,65 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.light.storage.mapper.AdminMapper">
+    <resultMap id="BaseResultMap" type="com.light.storage.entity.Admin">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,password,phone,email,create_time
+    </sql>
+    <!--    where用于去除第一个条件中出现的and前缀，
+    那么set标签就是去除最后一个更新字段语句中出现的,[逗号]后缀。
+    where 和 set 完全都可以被trim替换使用-->
+
+    <select id="selectByName" resultMap="BaseResultMap" parameterType="String" >
+        select
+        <include refid="Base_Column_List"/>
+        from admins where username=#{username}
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="int" >
+        select
+        <include refid="Base_Column_List"/>
+        from admins where id=#{id}
+    </select>
+
+    <select id="selectByEmail" resultMap="BaseResultMap" parameterType="string" >
+        select
+        <include refid="Base_Column_List"/>
+        from admins where email=#{email}
+    </select>
+
+    <insert id="insert" parameterType="Admin">
+        insert into admins (username,password,create_time,phone,email)
+        values (#{username},#{password},#{createTime},#{phone},#{email})
+    </insert>
+
+    <update id="updateSelective" parameterType="Admin">
+        update admins
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="password!=null">
+                password=#{password},
+            </if>
+            <if test="phone!=null">
+                phone=#{phone},
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+            <if test="createTime!=null">
+                create_time=#{createTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>

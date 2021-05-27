@@ -1,0 +1,73 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.light.storage.mapper.BirthInfoMapper">
+    <resultMap id="BaseResultMap" type="com.light.storage.entity.BirthInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="birth" jdbcType="VARCHAR" property="birth"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="subscribe" jdbcType="TINYINT" property="subscribe"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,name,birth,user_id,subscribe
+    </sql>
+    <!--    where用于去除第一个条件中出现的and前缀，
+    那么set标签就是去除最后一个更新字段语句中出现的,[逗号]后缀。
+    where 和 set 完全都可以被trim替换使用-->
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="int">
+        select
+        <include refid="Base_Column_List"/>
+        from birthInfo where user_id=#{userId}
+    </select>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from birthInfo
+        where name like concat('%',#{name},'%') and user_id=#{userId}
+    </select>
+
+    <select id="getBirthDay" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from birthInfo
+        where subscribe = 1
+    </select>
+
+    <delete id="delete" parameterType="int">
+        delete
+        from birthInfo
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="Account">
+        insert into birthInfo (name, birth, user_id, subscribe)
+        values (#{name}, #{birth}, #{userId}, #{subscribe})
+    </insert>
+
+    <update id="updateSelective" parameterType="Account">
+        update birthInfo
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="birth!=null">
+                birth=#{birth},
+            </if>
+            <if test="subscribe!=null">
+                subscribe=#{subscribe},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <select id="getNumOfBir" resultType="int" parameterType="int">
+        select count(*)
+        from birthInfo
+        where user_id = #{userId}
+    </select>
+
+</mapper>
