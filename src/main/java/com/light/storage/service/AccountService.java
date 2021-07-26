@@ -30,7 +30,12 @@ public class AccountService {
     }
 
     public List<Account> selectByName(String name,int userId) {
-        return accountMapper.selectByName(name,userId);
+        List<Account> accounts = accountMapper.selectByName(name, userId);
+        for (Account account : accounts) {
+            String decode =new String(Base64Utils.decodeFromString(account.getPassword())) ;
+            account.setPassword(decode);
+        }
+        return accounts;
     }
 
     @CachePut(value = "accounts" ,key="'userId:'+#account.userId")
