@@ -51,6 +51,8 @@ public class AccountService {
     public List<Account>  updateSelective(Account account) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         account.setAlterTime(dateFormat.format(new Date()));
+        String encode = Base64Utils.encodeToString(account.getPassword().getBytes(StandardCharsets.UTF_8));
+        account.setPassword(encode);
          accountMapper.updateSelective(account);
         return selectAll(account.getUserId());
     }
